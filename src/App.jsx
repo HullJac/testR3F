@@ -19,12 +19,22 @@ const Cube = ({position, size, color}) => {
     );
 }
 
+const Sphere = ({position, size, color}) => {
+    return (
+        <mesh position={position}>
+            <sphereGeometry args={size}/>
+            <meshStandardMaterial color={color}/>
+        </mesh>
+    );
+}
+
 const App = () => {
   return (
     <Canvas>
         <directionalLight position={[0 , 0, 2]} intensity={0.7}/>
         <ambientLight intensity={0.1}/>
-        <Cube position={[0,0,0]} size={[1,1,1]} color={"blue"} />
+        <Cube position={[2,1,0]} size={[1,1,1]} color={"blue"} />
+        <Sphere position={[0,0,0]} args={[1,30,30]} color={"pink"}/>
     </Canvas>
   );
 }

@@ -1,9 +1,10 @@
 import { Canvas, useFrame } from "@react-three/fiber"
 import './App.css'
-import { MeshStandardMaterial } from "three"
+import { DirectionalLightHelper, MeshStandardMaterial } from "three"
 import { useRef, useState } from "react"
 import { color, sin } from "three/examples/jsm/nodes/Nodes.js"
-import { MeshWobbleMaterial, OrbitControls } from "@react-three/drei"
+import { MeshWobbleMaterial, OrbitControls, useHelper } from "@react-three/drei"
+import { useControls } from "leva"
 
 
 const Cube = ({position, size, color}) => {
@@ -57,7 +58,17 @@ const Torus = ({position, size, color}) => {
     );
 }
 
-const TorusKnot = ({position, size, color}) => {
+const TorusKnot = ({position, size}) => {
+    const {color, radius} = useControls({
+        color: "lightblue",
+        radius: {
+            value: 5,
+            min: 1,
+            max: 10,
+            step: 0.5
+        }
+    })
+    
     const ref = useRef();
     // useFrame((state,delta) =>{
     //     ref.current.rotation.x += delta;
@@ -66,23 +77,50 @@ const TorusKnot = ({position, size, color}) => {
     // });
     return (
         <mesh position={position} ref={ref}>
-            <torusKnotGeometry args={size}/>
+            <torusKnotGeometry args={[radius, ...size]}/>
             {/* <meshStandardMaterial color={color}/> */}
             <MeshWobbleMaterial factor={5} speed={.5} color={color}/>
         </mesh>
     );
 }
 
-const App = () => {
-  return (
-    <Canvas>
-        <directionalLight position={[0 , 0, 2]} intensity={0.7}/>
+const Scene = () => {
+    const directionalLightRef = useRef()
+
+    const {lightColor, lightIntensity} = useControls({
+        lightColor: "white",
+        lightIntensity: {
+            value: 0.5,
+            min: 0,
+            max: 5,
+            step: 0.1
+        },
+    })
+
+    useHelper(directionalLightRef, DirectionalLightHelper, 0.5, "white")
+
+    return (
+    <>
+        <directionalLight 
+            position={[0 , 1, 2]} 
+            intensity={lightIntensity} 
+            ref={directionalLightRef}
+            color={lightColor}
+        />
         <ambientLight intensity={0.1}/>
         {/* <Cube position={[2,1,0]} size={[1,1,1]} color={"blue"} /> */}
         {/* <Sphere position={[0,0,0]} size={[1,30,30]} color={"red"}/> */}
         {/* <Torus position={[2,0,0]} size={[0.5,0.1,30,30]} color={"yellow"}/> */}
-        <TorusKnot position={[0,0,0]} size={[1,0.1,1000,50]} color={"white"}/>
+        <TorusKnot position={[0,0,0]} size={[0.1,1000,50]}/>
         <OrbitControls enableZoom={false}/>
+    </>
+    )
+}
+
+const App = () => {
+  return (
+    <Canvas>
+       <Scene />
     </Canvas>
   );
 }

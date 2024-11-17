@@ -1,3 +1,6 @@
+This is a tutorial I walked through to learn about React Three Fiber.
+The video I followed is [here](https://www.youtube.com/watch?v=vTfMjI4rVSI)
+
 # React + Vite
 
 This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
